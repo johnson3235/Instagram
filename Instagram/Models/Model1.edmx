@@ -58,7 +58,7 @@
           <Property Name="created_at" Type="datetime" />
           <Property Name="updated_at" Type="datetime" />
         </EntityType>
-        <Association Name="FK__likes__post_id__2A164134">
+        <Association Name="FK__likes__post_id__4CA06362">
           <End Role="posts" Type="Self.posts" Multiplicity="1" />
           <End Role="likes" Type="Self.likes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -70,7 +70,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__likes__user_id__29221CFB">
+        <Association Name="FK__likes__user_id__4BAC3F29">
           <End Role="users" Type="Self.users" Multiplicity="1" />
           <End Role="likes" Type="Self.likes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -100,11 +100,11 @@
           <EntitySet Name="posts" EntityType="Self.posts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="user_requests" EntityType="Self.user_requests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__likes__post_id__2A164134" Association="Self.FK__likes__post_id__2A164134">
+          <AssociationSet Name="FK__likes__post_id__4CA06362" Association="Self.FK__likes__post_id__4CA06362">
             <End Role="posts" EntitySet="posts" />
             <End Role="likes" EntitySet="likes" />
           </AssociationSet>
-          <AssociationSet Name="FK__likes__user_id__29221CFB" Association="Self.FK__likes__user_id__29221CFB">
+          <AssociationSet Name="FK__likes__user_id__4BAC3F29" Association="Self.FK__likes__user_id__4BAC3F29">
             <End Role="users" EntitySet="users" />
             <End Role="likes" EntitySet="likes" />
           </AssociationSet>
