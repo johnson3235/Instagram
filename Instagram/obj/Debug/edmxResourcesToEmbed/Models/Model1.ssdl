@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="InstagramModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="comment_posts">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="user_id" Type="bigint" Nullable="false" />
+    <Property Name="post_id" Type="bigint" Nullable="false" />
+    <Property Name="comment" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="created_at" Type="datetime" />
+  </EntityType>
+  <EntityType Name="likes">
+    <Key>
+      <PropertyRef Name="user_id" />
+      <PropertyRef Name="post_id" />
+    </Key>
+    <Property Name="status" Type="int" Nullable="false" />
+    <Property Name="user_id" Type="bigint" Nullable="false" />
+    <Property Name="post_id" Type="bigint" Nullable="false" />
+  </EntityType>
+  <EntityType Name="posts">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="likes" Type="int" Nullable="false" />
+    <Property Name="comment" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="images" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="user_id" Type="bigint" Nullable="false" />
+    <Property Name="created_at" Type="datetime" />
+  </EntityType>
+  <EntityType Name="user_requests">
+    <Key>
+      <PropertyRef Name="user_id" />
+      <PropertyRef Name="request_id" />
+    </Key>
+    <Property Name="user_id" Type="bigint" Nullable="false" />
+    <Property Name="request_id" Type="bigint" Nullable="false" />
+    <Property Name="status" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="users">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="fname" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="lname" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="email" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="password" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="phone" Type="varchar" MaxLength="255" />
+    <Property Name="images" Type="varchar" MaxLength="255" />
+    <Property Name="created_at" Type="datetime" />
+    <Property Name="updated_at" Type="datetime" />
+  </EntityType>
+  <Association Name="FK__likes__post_id__2A164134">
+    <End Role="posts" Type="Self.posts" Multiplicity="1" />
+    <End Role="likes" Type="Self.likes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="posts">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="likes">
+        <PropertyRef Name="post_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__likes__user_id__29221CFB">
+    <End Role="users" Type="Self.users" Multiplicity="1" />
+    <End Role="likes" Type="Self.likes" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="likes">
+        <PropertyRef Name="user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="user_id_fk">
+    <End Role="users" Type="Self.users" Multiplicity="1" />
+    <End Role="user_requests" Type="Self.user_requests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user_requests">
+        <PropertyRef Name="user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="InstagramModelStoreContainer">
+    <EntitySet Name="comment_posts" EntityType="Self.comment_posts" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="likes" EntityType="Self.likes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="posts" EntityType="Self.posts" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="user_requests" EntityType="Self.user_requests" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="users" EntityType="Self.users" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK__likes__post_id__2A164134" Association="Self.FK__likes__post_id__2A164134">
+      <End Role="posts" EntitySet="posts" />
+      <End Role="likes" EntitySet="likes" />
+    </AssociationSet>
+    <AssociationSet Name="FK__likes__user_id__29221CFB" Association="Self.FK__likes__user_id__29221CFB">
+      <End Role="users" EntitySet="users" />
+      <End Role="likes" EntitySet="likes" />
+    </AssociationSet>
+    <AssociationSet Name="user_id_fk" Association="Self.user_id_fk">
+      <End Role="users" EntitySet="users" />
+      <End Role="user_requests" EntitySet="user_requests" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

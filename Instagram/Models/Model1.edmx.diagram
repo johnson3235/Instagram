@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ad3b4b4fbef94bb2a895b91b8cb560d5" Name="Diagram1">
+        <EntityTypeShape EntityType="InstagramModel.like" Width="1.5" PointX="8.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="InstagramModel.post" Width="1.5" PointX="8.75" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="InstagramModel.user_requests" Width="1.5" PointX="4.125" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="InstagramModel.user" Width="1.5" PointX="1.875" PointY="3.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="InstagramModel.comment_posts" Width="1.5" PointX="3" PointY="0.5" IsExpanded="true" />
+        <AssociationConnector Association="InstagramModel.FK__likes__post_id__2A164134" ManuallyRouted="false" />
+        <AssociationConnector Association="InstagramModel.FK__likes__user_id__29221CFB" ManuallyRouted="false" />
+        <AssociationConnector Association="InstagramModel.FK__comment_p__post___45BE5BA9" ManuallyRouted="false" />
+        <AssociationConnector Association="InstagramModel.user_id_fk" ManuallyRouted="false" />
+        <AssociationConnector Association="InstagramModel.FK__comment_p__user___44CA3770" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

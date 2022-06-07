@@ -1,0 +1,315 @@
+﻿@model Instagram.ViewModels.PostUser
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Main_id = Model.Mainuser.id;
+}
+<style>
+    #fb{
+
+  border:1px solid gray;
+  border-radius:5px;
+  position:relative;
+
+}
+#fb p{
+  font-family:sans-serif;
+  margin: 0 0 0 10px;
+  line-height:30px;
+}
+
+#fb-top span{
+  color:#4267B2;
+  float:right;
+  margin-right:10px;
+}
+#fb-top{
+  background-color:#efefef;
+  height:30px;
+  border-radius:5px 5px 0 0;
+  position:relative;
+  top:-1px;
+  left:-9px;
+  border:1px solid gray;
+}
+
+#fb img{
+  position:relative;
+}
+
+#info{
+  position:relative;
+}
+
+#info {
+  color:#4267B2;
+  line-height:25px;
+  font-size:18px;
+}
+
+#info span{
+  color:#777;
+  font-size:14px;
+}
+
+#button-block{
+  position:relative;
+  right:10px;
+  top:85px;
+}
+
+#button-block div{
+  display:block;
+}
+
+#confirm, #delete{
+  background-color:#4267B2;
+  color:white;
+  padding:7px;
+  border-radius:2px;
+  margin-right:10px;
+  font-family:sans-serif;
+}
+
+#delete{
+  color:#222;
+  background-color:#bbb;
+  border:1px solid #999;
+  padding:6px;
+  margin-right:0;
+}
+
+#button-block div:hover{
+  opacity:.8;
+  cursor:pointer;
+}
+
+</style>
+    <div id="page-content " class="page-content">
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                </div>
+            </div>
+        </section>
+        <div class="container">
+            <div class="row p-3 m-3">
+                <div class="col-md-6 offset-1">
+                    <div class="row" id="ajaxDiv">
+
+                        @foreach (var post in Model.post)
+                        {
+
+                            var user = Model.user.SingleOrDefault(x => x.id == post.user_id);
+
+                            var comments = Model.comments.Where(x => x.post_id == post.id).OrderByDescending(x => x.created_at).Take(3);
+                            var count_comments = Model.comments.Where(x => x.post_id == post.id).Count();
+                            int status = 0;
+
+                            if (Model.likes.Where(y => y.post_id == post.id).SingleOrDefault(x => x.user_id == Main_id) == null)
+                            {
+                                status = 0;
+
+                            }
+                            else
+                            {
+                                status = 1;
+                            }
+
+                            var friend = Model.friend1.Where(x => x.user_id == Main_id).Where(x => x.request_id == post.user_id).Where(x => x.status == 2).SingleOrDefault();
+                            if (friend != null)
+                            {
+
+
+
+
+                                <div class="col-md-12">
+                                    <!-- Box Comment -->
+                                    <div class="card card-widget">
+                                        <div class="card-header">
+                                            <a href='@Url.Action("UserDetails", new { controller = "User", id=Main_id,user_id = user.id })'>
+                                                <div class="user-block">
+
+                                                    <img class="img-circle" src="~/images/@Html.DisplayFor(modelItem => user.images)" alt="User Image">
+                                                    <span class="username">@Html.DisplayFor(modelitem => user.fname) @Html.DisplayFor(modelitem => user.lname)</span>
+
+                                                    <span class="description">@Html.DisplayFor(modelItem => post.created_at)</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- /.card-header -->
+                                        <div class="card-body" style="display: block;">
+                                            <img class="img-fluid pad" src="~/images/@Html.DisplayFor(modelItem => post.images)" alt="Photo">
+
+                                            <p>@Html.DisplayFor(modelItem => post.comment)</p>
+                                            <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i> Share</button>
+                                            @if (status == 1)
+                                            {
+
+                                                var like = Model.likes.Where(y => y.post_id == post.id).SingleOrDefault(x => x.user_id == Main_id);
+                                                if (like.status != 0)
+                                                {
+                                                    <a href='@Url.Action("Likes",  new { controller = "Post", id = post.id })'> <button type="button" class="btn btn-danger btn-sm"><i class="fa-regular fa-heart"></i></button></a>
+                                                }
+                                                else
+                                                {
+                                                    <a href='@Url.Action("Likes",  new { controller = "Post", id = post.id })'><button class="btn btn-outline-danger"> <i class="fa-regular fa-heart"></i></button></a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <a href='@Url.Action("Likes",  new { controller = "Post", id = post.id })'><button class="btn btn-outline-danger"> <i class="fa-regular fa-heart"></i></button></a>
+                                            }
+
+                                            <span class="float-right text-muted">@Html.DisplayFor(modelItem => post.likes) likes - @Html.DisplayFor(modelItem => count_comments) comments</span>
+                                        </div>
+                                        <div class="card-footer card-comments" style="display: block;">
+
+                                            @foreach (var comment in comments)
+                                            {
+                                                var user_comment = Model.user.SingleOrDefault(x => x.id == comment.user_id);
+
+
+
+                                                <div class="card-comment">
+                                                    <img class="img-circle img-sm" src="~/images/@Html.DisplayFor(modelItem => user_comment.images)" alt="User Image">
+
+                                                    <div class="comment-text">
+                                                        <span class="username">
+                                                            <span class="text-muted float-right">@Html.DisplayFor(modelItem => comment.created_at)</span>
+                                                        </span><!-- /.username -->
+                                                        @Html.DisplayFor(modelItem => comment.comment)
+
+                                                    </div>
+                                                    <!-- /.comment-text -->
+                                                </div>
+                                            }
+                                            <a href='@Url.Action("Postdetails", new { controller = "Post", post_id=post.id , user_id = Model.Mainuser.id ,user_page = post.user_id })'>
+                                                <div class="col-md-12 text-center">
+                                                    <button class="btn btn-outline-primary col-12 p-3">SEE All Comments</button>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- /.card-footer -->
+                                        <div class="card-footer bg-white ">
+
+                                            @using (Html.BeginForm("Create", "Post", null, FormMethod.Post))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <img class="img-fluid img-circle img-sm" src="~/images/@Html.DisplayFor(model => model.Mainuser.images)" alt="Alt Text">
+                                                        <div class="col-7">
+                                                            <input type="text" class="form-control form-control-sm" placeholder="Press enter to post comment" id="comment" name="comment">
+                                                        </div>
+                                                        <input type="hidden" id="user_id" name="user_id" value="@Model.Mainuser.id" />
+                                                        <input type="hidden" id="post_id" name="post_id" value="@post.id" />
+                                                        <div class="col-4 form-group">
+                                                            <div class="col-md-offset-2 col-md-10">
+                                                                <input type="submit" value="Post" class="btn btn-success" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            }
+
+                                        </div>
+                                        <!-- /.card-footer -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            }
+                        }
+
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="col-md-4" style="position:fixed;">
+                        <div class="card col-md-8   mb-3 p-auto card border-2">
+                            <div class="col-md-12 mb-5 mb-md-0">
+                                <div class=" testimonial-card bg-white p-4">
+                                    <div class="row">
+
+                                        <div class="avatar col-12 mx-auto">
+                                            <div class="card-body">
+                                          
+                                                <div class="col-12">
+
+                                                    @foreach (var request in Model.Request.Where(x => x.status == 0))
+                                                    {
+                                                        var user_Request = Model.user.Where(x => x.id == request.request_id).Where(x => x.id != request.user_id).SingleOrDefault();
+
+                                                        <div id="fb" class="col-12 mb-2">
+                                                            <div id="fb-top" class="col-12">
+                                                                <p><b>Friend Requests</b></p>
+                                                            </div>
+                                                            <div class="row p-3">
+                                                                <a href="@Url.Action("UserDetails", new { controller = "User", user_id = user_Request.id })">
+                                                                    <img src="~/images/@Html.DisplayFor(modelItem => user_Request.images)" height="100" width="100" alt="Image of woman">
+                                                                    <p id="info"><b>@Html.DisplayFor(modelItem => user_Request.fname) @Html.DisplayFor(modelItem => user_Request.lname)</b> <br> </p>
+                                                                </a>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 p-2">
+                                                                    @using (Html.BeginForm("Accept", "Request", FormMethod.Post))
+                                                                    {
+                                                                        @Html.AntiForgeryToken()
+
+                                                                        <input type="hidden" id="user_id" name="user_id" value="@Model.Mainuser.id" />
+                                                                        <input type="hidden" id="request_id" name="request_id" value="@request.request_id" />
+                                                                        <div class="col-4 form-group">
+                                                                            <div class="col-md-offset-2 col-md-10">
+                                                                                <input type="submit" value="Confirm" class="btn btn-success" />
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+
+                                                                    @using (Html.BeginForm("Reject", "Request", FormMethod.Post))
+                                                                    {
+                                                                        @Html.AntiForgeryToken()
+                                                                        <input type="hidden" id="user_id" name="user_id" value="@Model.Mainuser.id" />
+                                                                        <input type="hidden" id="request_id" name="request_id" value="@request.request_id" />
+                                                                        <div class="col-4 form-group">
+                                                                            <div class="col-md-offset-2 col-md-10">
+                                                                                <input type="submit" value="Delete Request" class="btn btn-danger" />
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                                      }
+                                                    <a href='@Url.Action("UserRequests",  new { controller = "Request"})'>
+                                                        <div class="col-md-12 text-center">
+                                                            <button class="btn btn-outline-primary col-12 p-3">SEE All Comments</button>
+                                                        </div>
+                                                    </a>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                  
+                                </div>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+

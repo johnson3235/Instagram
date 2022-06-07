@@ -1,0 +1,205 @@
+﻿@model Instagram.Models.user
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login </title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            background-color: #eee;
+        }
+
+
+        .main-content {
+            background-color: #fff;
+            border: 2px solid #e6e6e6;
+        }
+
+        .header {
+            border: 0px solid #000;
+            margin-bottom: 5px;
+        }
+
+            .header img {
+                height: 50px;
+                width: 175px;
+                margin: auto;
+                margin-bottom: 20px;
+                position: relative;
+                left: 40px;
+            }
+
+        .input-1 {
+            width: 100%;
+            margin-bottom: 5px;
+            padding: 8px 12px;
+            border: 1px solid #dbdbdb;
+            box-sizing: border-box;
+            border-radius: 3px;
+        }
+
+        .overlap-text {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+            .overlap-text a {
+                position: absolute;
+                top: 8px;
+                right: 10px;
+                color: #003569;
+                font-size: 14px;
+                text-decoration: none;
+                font-family: 'Overpass Mono', monospace;
+            }
+
+
+        .btn {
+            width: 100%;
+            background-color: #008ae6;
+            border: 1px solid #008ae6;
+            padding: 5px 12px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .sub-content {
+            width: 250px;
+            height: 40%;
+            margin: 10px auto;
+            border: 1px solid #e6e6e6;
+            padding: 20px 50px;
+            background-color: #fff;
+        }
+
+        .s-part {
+            text-align: center;
+            word-spacing: -3px;
+            font-weight: normal;
+            margin-top: 10px;
+        }
+
+            .s-part a {
+                text-decoration: none;
+                cursor: pointer;
+                color: #3897f0;
+                font-family: 'Overpass Mono', monospace;
+                word-spacing: -3px;
+                font-weight: normal;
+            }
+
+        input:focus {
+            background-color: dodgerblue
+        }
+        label {
+            position: absolute;
+            pointer-events: none;
+            left: 10px;
+            padding-bottom: 15px;
+            transform: translateY(10px);
+            line-height: 6px;
+            transition: all ease-out 0.1s;
+            font-size: 14px;
+            color: #999;
+            padding-top: 6px;
+        }
+
+        .errorMassage {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="page-content " class="page-content">
+        <div class="banner">
+            <div class="jumbotron jumbotron-video text-center bg-transparent mb-0 rounded-0">
+            </div>
+        </div>
+        <div class="container">
+            @using (Html.BeginForm("Regisiter", "Regisiter", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+            <div class="main-content col-md-8 offset-2 text-center p-3">
+                <div class="header">
+                    <img src="~/images/Instagram-logos_black - Copy.png" />
+                </div>
+                <div class="l-part">
+                    <div class="overlap-text">
+                        @Html.TextBoxFor(model => Model.fname, new { @class = "input-1" })
+                        @Html.LabelFor(model => Model.fname)
+
+                        <div class="alert-danger text-center">@Html.ValidationMessageFor(model => Model.fname)</div>
+                    </div>
+                    <div class="overlap-text">
+                        @Html.TextBoxFor(model => Model.lname, new { @class = "input-1" })
+                        @Html.LabelFor(model => Model.lname)
+
+                        <div class="alert-danger text-center">@Html.ValidationMessageFor(model => Model.lname)</div>
+                    </div>
+                    <div class="overlap-text">
+                        @Html.TextBoxFor(model => Model.email, new { @class = "input-1" })
+                        @Html.LabelFor(model => Model.email)
+
+                        <div class="alert-danger text-center">@Html.ValidationMessageFor(model => Model.email)</div>
+                    </div>
+
+                    <div class="overlap-text">
+                        @Html.LabelFor(model => Model.password)
+                        @Html.TextBoxFor(model => Model.password, new { @class = "input-1" })
+
+                        <div class="alert-danger text-center">
+                            @Html.ValidationMessageFor(model => Model.password)
+                        </div>
+                    </div>
+                    <div class="overlap-text">
+                        @Html.LabelFor(model => Model.phone)
+                        @Html.TextBoxFor(model => Model.phone, new { @class = "input-1" })
+
+                        <div class="alert-danger text-center">
+                            @Html.ValidationMessageFor(model => Model.phone)
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="">Image</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="file" name="file">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+
+                        </div>
+                    </div>
+                    <button type="submit" value="Regisiter" class="btn">Regisiter</button>
+                    <div class="alert-danger text-center errorMassage">
+                    </div>
+                </div>
+                <div class="alert-danger">
+                    @Html.ViewData["msg"]
+                </div>
+            </div>
+            }
+            @*<div class="sub-content">
+            <div class="s-part">
+                Don't have an account?<a href='@Url.Action("Index", "NewReg")'>Sign up</a>
+            </div>
+        </div>*@
+           
+
+        </div>
+       
+    </div>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

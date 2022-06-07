@@ -1,0 +1,143 @@
+﻿@using Instagram.Models;
+@using System.Collections;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Instagram</title>
+    @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="~/Content/style.css">
+
+</head>
+<body style="background-color: #eee;">
+    <div class="row">
+        <div class="page-header position-relative">
+            <!--=============== Navbar ===============-->
+            <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-transparent" id="page-navigation">
+                <div class="container">
+                    <div class="row w-100">
+                        <div class="col-md-3">
+
+                            <!-- Navbar Brand -->
+                            <a href='@Url.Action("Index", new { controller = "Post"})' asp-controller="Home" asp-action="Index" class="navbar-brand">
+                                <img src="~/images/Instagram-logos_black - Copy.png" alt="">
+                            </a>
+                            <!-- Toggle Button -->
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarcollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            @if (Session["user_id"] == "0" || Session["user_id"] == null)
+                            {
+                            }
+                            else
+                            {
+                                using (Html.BeginForm("UserSearch", "User", FormMethod.Post))
+                                {
+                                    <div class="input-group">
+                                        <div class="col-md-8">
+                                            <input type="search" class="form-control rounded w-100" name="searching" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="submit" class="btn btn-outline-primary w-100" value="search">
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="col-mt-3">
+                            <div class="collapse navbar-collapse mt-2" id="navbarcollapse">
+                                <!-- Navbar Menu -->
+                                <ul class="navbar-nav ml-auto">
+
+                                    @if (Session["user_id"] == "0" || Session["user_id"] == null)
+                                    {
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Index", new { controller = "Regisiter"})" class="nav-link">Register</a>
+                                        </li>
+                                        <li class="nav-item">
+
+                                            <a href="@Url.Action("Index", new { controller = "Login"})" class="nav-link">Login</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+
+                                        user user = (user)Session["User"];
+
+                                        <li class="nav-item">
+
+                                            <a href='@Url.Action("CreatePost", new { controller = "Post", id= user.id})'>
+                                                <i class="fa-solid fa-square-plus mt-2" style="font-size:25px; padding:2px;"></i>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item dropdown">
+                                            <a href="@Url.Action("UserPosts", new { controller = "User", id= user.id})" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" aria-expanded="false">
+                                                <span>@(user.fname)@(user.lname)</span>
+                                                <div class="avatar-header">
+                                                    <img src="~/images/@(user.images)" class="rounded-circle" height="22" alt="Avatar" loading="lazy">
+
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="@Url.Action("Logout", new { controller = "Login"})" class="nav-link">Logout</a>
+                                        </li>
+
+
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        @RenderBody()
+
+
+
+
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/style.js"></script>
+    <script>
+        const searchFocus = document.getElementById('search-focus');
+        const keys = [
+            { keyCode: 'AltLeft', isTriggered: false },
+            { keyCode: 'ControlLeft', isTriggered: false },
+        ];
+
+        window.addEventListener('keydown', (e) => {
+            keys.forEach((obj) => {
+                if (obj.keyCode === e.code) {
+                    obj.isTriggered = true;
+                }
+            });
+
+            const shortcutTriggered = keys.filter((obj) => obj.isTriggered).length === keys.length;
+
+            if (shortcutTriggered) {
+                searchFocus.focus();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys.forEach((obj) => {
+                if (obj.keyCode === e.code) {
+                    obj.isTriggered = false;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

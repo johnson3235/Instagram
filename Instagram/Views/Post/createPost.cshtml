@@ -1,0 +1,81 @@
+﻿@model Instagram.Models.user
+@{
+    ViewBag.Title = "createPost";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+    <div id="page-content " class="page-content">
+        <div class="container">
+            <div class="banner">
+                <div class="jumbotron jumbotron-video text-center bg-transparent mb-0 rounded-0">
+                </div>
+            </div>
+            <div class="col-12 p-3">
+                <div class="card card-primary p-3">
+                    <div class="card-header">
+                        <h3 class="card-title">Create Post</h3>
+                    </div>
+                    @using (Html.BeginForm("CreatePostes", "Post", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-6 form-group mb-0">
+                        <label for="">Image</label>
+
+                        <div class="custom-file">
+
+                            <input type="file" class="custom-file-input" id=" customFile" name="image" onchange="previewFile()">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+
+
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img id="img-aavatar" src="" class="so img-logo w-75" />
+                    </div>
+                </div>
+
+                        <div class="card-body">
+                            <div class="form-row">
+                                <div class="col-6">
+                                    <label for="name_en">Comment</label>
+                                    <input type="text" name="Comment" class="form-control" id="Comment">
+                                </div>
+                                <div class="col-6">
+                                    <input type="hidden" name="likes" class="form-control" id="likes" value="0">
+                                    <input type="hidden" name="user_id" class="form-control" id="user_id" value="@Model.id">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <input type="submit" class="btn btn-outline-primary" value="Post">
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+            <div>
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        </div>
+ </div>
+
+<script>
+    function previewFile() {
+        var preview = document.getElementById("img-aavatar");
+  var file    = document.querySelector('input[type=file]').files[0];
+  var reader  = new FileReader();
+
+  reader.onloadend = function () {
+    preview.src = reader.result;
+  }
+
+  if (file) {
+    reader.readAsDataURL(file);
+  } else {
+    preview.src = "";
+  }
+}
+</script>

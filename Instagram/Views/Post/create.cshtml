@@ -1,0 +1,48 @@
+@model Instagram.Models.user
+@{
+    ViewBag.Title = "create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Create Post</h3>
+        </div>
+        @using (Html.BeginForm("Create", "Post", null, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+                <div class="form-group mb-0">
+                    <label for="">Image</label>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input
+                               id="customFile" name="image">
+                        <label class="custom-file-label" for="customFile">Choose file</label>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="col-6">
+                            <label for="name_en">Comment</label>
+                            <input type="text" name="Comment" class="form-control
+                                   id="Comment">
+
+
+                        </div>
+                        <div class="col-6">
+                            <input type="hidden" name="likes" class="form-control" id="likes" value="0">
+                            <input type="hidden" name="user_id" class="form-control" id="user_id" value="@Model.id">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                    <input type="submit" class="btn btn-outline-primary"  value="Post">
+                </div>
+        }
+        </div>
+</div>
+

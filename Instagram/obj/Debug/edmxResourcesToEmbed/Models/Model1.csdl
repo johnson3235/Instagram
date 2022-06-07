@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="InstagramModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="like">
+    <Key>
+      <PropertyRef Name="user_id" />
+      <PropertyRef Name="post_id" />
+    </Key>
+    <Property Name="status" Type="Int32" Nullable="false" />
+    <Property Name="user_id" Type="Int64" Nullable="false" />
+    <Property Name="post_id" Type="Int64" Nullable="false" />
+    <NavigationProperty Name="post" Relationship="Self.FK__likes__post_id__2A164134" FromRole="likes" ToRole="posts" />
+    <NavigationProperty Name="user" Relationship="Self.FK__likes__user_id__29221CFB" FromRole="likes" ToRole="users" />
+  </EntityType>
+  <EntityType Name="post">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="likes" Type="Int32" Nullable="false" />
+    <Property Name="comment" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="images" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="user_id" Type="Int64" Nullable="false" />
+    <Property Name="created_at" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="likes1" Relationship="Self.FK__likes__post_id__2A164134" FromRole="posts" ToRole="likes" />
+    <NavigationProperty Name="comment_posts" Relationship="Self.FK__comment_p__post___45BE5BA9" FromRole="posts" ToRole="comment_posts" />
+  </EntityType>
+  <EntityType Name="user_requests">
+    <Key>
+      <PropertyRef Name="user_id" />
+      <PropertyRef Name="request_id" />
+    </Key>
+    <Property Name="user_id" Type="Int64" Nullable="false" />
+    <Property Name="request_id" Type="Int64" Nullable="false" />
+    <Property Name="status" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="user" Relationship="Self.user_id_fk" FromRole="user_requests" ToRole="users" />
+  </EntityType>
+  <EntityType Name="user">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="fname" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="lname" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="phone" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="images" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="created_at" Type="DateTime" Precision="3" />
+    <Property Name="updated_at" Type="DateTime" Precision="3" />
+  </EntityType>
+  <EntityType Name="comment_posts">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="user_id" Type="Int64" Nullable="false" />
+    <Property Name="post_id" Type="Int64" Nullable="false" />
+    <Property Name="comment" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="post" Relationship="Self.FK__comment_p__post___45BE5BA9" FromRole="comment_posts" ToRole="posts" />
+    <NavigationProperty Name="user" Relationship="Self.FK__comment_p__user___44CA3770" FromRole="comment_posts" ToRole="users" />
+    <Property Name="id" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="created_at" Type="DateTime" Precision="3" />
+  </EntityType>
+  <Association Name="FK__likes__post_id__2A164134">
+    <End Role="posts" Type="Self.post" Multiplicity="1" />
+    <End Role="likes" Type="Self.like" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="posts">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="likes">
+        <PropertyRef Name="post_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__likes__user_id__29221CFB">
+    <End Role="users" Type="Self.user" Multiplicity="1" />
+    <End Role="likes" Type="Self.like" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="likes">
+        <PropertyRef Name="user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__comment_p__post___45BE5BA9">
+    <End Role="posts" Type="Self.post" Multiplicity="1" />
+    <End Role="comment_posts" Type="Self.comment_posts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="posts">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="comment_posts">
+        <PropertyRef Name="post_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="user_id_fk">
+    <End Role="users" Type="Self.user" Multiplicity="1" />
+    <End Role="user_requests" Type="Self.user_requests" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="user_requests">
+        <PropertyRef Name="user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__comment_p__user___44CA3770">
+    <End Role="users" Type="Self.user" Multiplicity="1" />
+    <End Role="comment_posts" Type="Self.comment_posts" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="users">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="comment_posts">
+        <PropertyRef Name="user_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="InstagramEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="likes" EntityType="Self.like" />
+    <EntitySet Name="posts" EntityType="Self.post" />
+    <EntitySet Name="user_requests" EntityType="Self.user_requests" />
+    <EntitySet Name="users" EntityType="Self.user" />
+    <EntitySet Name="comment_posts" EntityType="Self.comment_posts" />
+    <AssociationSet Name="FK__likes__post_id__2A164134" Association="Self.FK__likes__post_id__2A164134">
+      <End Role="posts" EntitySet="posts" />
+      <End Role="likes" EntitySet="likes" />
+    </AssociationSet>
+    <AssociationSet Name="FK__likes__user_id__29221CFB" Association="Self.FK__likes__user_id__29221CFB">
+      <End Role="users" EntitySet="users" />
+      <End Role="likes" EntitySet="likes" />
+    </AssociationSet>
+    <AssociationSet Name="FK__comment_p__post___45BE5BA9" Association="Self.FK__comment_p__post___45BE5BA9">
+      <End Role="posts" EntitySet="posts" />
+      <End Role="comment_posts" EntitySet="comment_posts" />
+    </AssociationSet>
+    <AssociationSet Name="user_id_fk" Association="Self.user_id_fk">
+      <End Role="users" EntitySet="users" />
+      <End Role="user_requests" EntitySet="user_requests" />
+    </AssociationSet>
+    <AssociationSet Name="FK__comment_p__user___44CA3770" Association="Self.FK__comment_p__user___44CA3770">
+      <End Role="users" EntitySet="users" />
+      <End Role="comment_posts" EntitySet="comment_posts" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

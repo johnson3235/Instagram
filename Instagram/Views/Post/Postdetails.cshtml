@@ -1,0 +1,599 @@
+﻿@model Instagram.ViewModels.PostsMain
+
+@{
+    ViewBag.Title = "Postdetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div id="content" class="content p-0">
+        <div class="profile-header">
+            <div class="profile-header-cover"></div>
+            <div class="profile-header-content">
+                <div class="profile-header-img mb-4">
+                    <img src="~/images/@Html.DisplayFor(model => model.user_page.images)" class="mb-4" alt="" />
+                </div>
+
+
+                <div class="profile-header-info">
+                    <h4 class="m-t-sm">@Html.DisplayFor(model => model.user_page.fname) @Html.DisplayFor(model => model.user_page.lname)</h4>
+
+                    <p class="m-b-sm">UXUI + Frontend Developer</p>
+                    @if (Model.user_page.id != Model.Mainuser.id)
+                    {
+                        if (Model.friend1.Where(x => x.request_id == Model.user_page.id).Where(x => x.user_id == Model.Mainuser.id).SingleOrDefault() != null)
+                        {
+
+                            var so = Model.friend1.Where(x => x.request_id == Model.user_page.id).Where(x => x.user_id == Model.Mainuser.id).SingleOrDefault();
+                            if (so.status == 0)
+                            {
+                                <div class="col-10 offset-1">
+                                    <div class="col-6">
+                                        @using (Html.BeginForm("Accept", "Request", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" id="user_id" name="user_id" value="@Model.Mainuser.id" />
+                                            <input type="hidden" id="request_id" name="request_id" value="@Model.user_page.id" />
+                                            <div class="col-4 form-group">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <input type="submit" value="Accept" class="btn btn-success" />
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="col-6">
+                                        @using (Html.BeginForm("Reject", "Request", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" id="user_id" name="user_id" value="@Model.Mainuser.id" />
+                                            <input type="hidden" id="request_id" name="request_id" value="@Model.user_page.id" />
+                                            <div class="col-4 form-group">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <input type="submit" value="Reject" class="btn btn-danger" />
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else if (so.status == 2)
+                            {
+                                <a href="#" class="btn btn-xs btn-success mb-2">Friends</a>
+                            }
+                            else
+                            {
+                                <a href="#" class="btn btn-xs btn-danger mb-2">Rejected</a>
+                            }
+
+                        }
+                        else if (Model.friend1.Where(x => x.request_id == Model.Mainuser.id).Where(x => x.user_id == Model.user_page.id).SingleOrDefault() != null)
+                        {
+                            var so = Model.friend1.Where(x => x.request_id == Model.Mainuser.id).Where(x => x.user_id == Model.user_page.id).SingleOrDefault();
+                            if (so.status == 0)
+                            {
+                                <a href="#" class="btn btn-xs btn-warning mb-2">Requesting</a>
+                            }
+                            else if (so.status == 2)
+                            {
+                                <a href="#" class="btn btn-xs btn-success mb-2">Friends</a>
+                            }
+                            else
+                            {
+                                <a href="#" class="btn btn-xs btn-danger mb-2">Rejected</a>
+                            }
+                        }
+
+                        else
+                        {
+
+                            using (Html.BeginForm("SendRequest", "Request", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden" id="user_id" name="user_id" value="@Model.user_page.id" />
+                                <input type="hidden" id="request_id" name="request_id" value="@Model.Mainuser.id" />
+                                <div class="col-4 form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Request Friend" class="btn btn-success" />
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    }
+                    else
+                    {
+
+                        <a href="#" class="btn btn-xs btn-primary mb-2">Edit Profile</a>
+                    }
+                </div>
+            </div>
+
+            <ul class="profile-header-tab nav nav-tabs">
+                <li class="nav-item"><a href='@Url.Action("UserPosts", new { controller = "User",user_id=Model.user_page.id})' class="nav-link" data-toggle="tab">POSTS</a></li>
+                <li class="nav-item"><a href='@Url.Action("FriendList", new { controller = "User",user_id=Model.user_page.id})' class="nav-link active show" data-toggle="tab">FRIENDS</a></li>
+            </ul>
+        </div>
+
+        <div class="profile-container">
+            <div class="row row-space-20">
+                <div class="col-md-8">
+                    <div class="row ">
+                        <div id="page-content " class="page-content">
+                            <div class="container">
+                                <div class="row p-3 m-3">
+                                    <div class="col-md-10 offset-1">
+                                        <div class="row" id="ajaxDiv">
+
+                                            @{
+                                                var Main_id = Model.Mainuser.id;
+                                                var comments = Model.comments.Where(x => x.post_id == Model.post.id).OrderByDescending(x => x.created_at).ToList();
+                                                var count_comments = Model.comments.Where(x => x.post_id == Model.post.id).Count();
+                                                int status = 0;
+
+                                                if (Model.likes.Where(y => y.post_id == Model.post.id).SingleOrDefault(x => x.user_id == Main_id) == null)
+                                                {
+                                                    status = 0;
+
+                                                }
+                                                else
+                                                {
+                                                    status = 1;
+                                                }
+
+
+                                                <div class="col-md-12">
+                                                    <!-- Box Comment -->
+                                                                                                <div class="card card-widget">
+                                                                                                    <div class="card-header">
+                                                                                                        <div class="user-block">
+                                                                                                            <img class="img-circle" src="~/images/@Html.DisplayFor(modelItem => Model.user_post.images)" alt="User Image">
+                                                                                                            <span class="username"><a href="#">@Html.DisplayFor(modelitem => Model.user_post.fname) @Html.DisplayFor(modelitem => Model.user_post.lname)</a></span>
+                                                                                                            <span class="description">@Html.DisplayFor(modelItem => Model.post.created_at)</span>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <!-- /.card-header -->
+                                                                                                    <div class="card-body" style="display: block;">
+                                                                                                        <img class="img-fluid pad" src="~/images/@Html.DisplayFor(modelItem => Model.post.images)" alt="Photo">
+
+                                                                                                        <p>@Html.DisplayFor(modelItem => Model.post.comment)</p>
+                                                                                                        <button type="button" class="btn btn-default btn-sm"><i class="fas fa-share"></i> Share</button>
+                                                                                                        @if (status == 1)
+                                                                                                        {
+
+                                                                                                            var like = Model.likes.Where(y => y.post_id == Model.post.id).SingleOrDefault(x => x.user_id == Main_id);
+                                                                                                            if (like.status != 0)
+                                                                                                            {
+                                                                                                                <a href='@Url.Action("Likes",  new { controller = "Post", id = Model.post.id })'> <button type="button" class="btn btn-danger btn-sm"><i class="fa-regular fa-heart"></i></button></a>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <a href='@Url.Action("Likes",  new { controller = "Post", id = Model.post.id })'><button class="btn btn-outline-danger"> <i class="fa-regular fa-heart"></i></button></a>
+                                                                                                            }
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            <a href='@Url.Action("Likes",  new { controller = "Post", id = Model.post.id })'><button class="btn btn-outline-danger"> <i class="fa-regular fa-heart"></i></button></a>
+                                                                                                        }
+
+                                                                                                        <span class="float-right text-muted">@Html.DisplayFor(modelItem => Model.post.likes) likes - @Html.DisplayFor(modelItem => count_comments) comments</span>
+                                                                                                    </div>
+                                                                                                    <div class="card-footer card-comments" style="display: block;">
+
+                                                                                                        @foreach (var comment in comments)
+                                                                                                        {
+                                                                                                            var user_comment = Model.users.SingleOrDefault(x => x.id == comment.user_id);
+
+
+
+                                                                                                            <div class="card-comment">
+                                                                                                                <img class="img-circle img-sm" src="~/images/@Html.DisplayFor(modelItem => user_comment.images)" alt="User Image">
+
+                                                                                                                <div class="comment-text">
+                                                                                                                    <span class="username">
+                                                                                                                        <span class="text-muted float-right">@Html.DisplayFor(modelItem => comment.created_at)</span>
+                                                                                                                    </span><!-- /.username -->
+                                                                                                                    @Html.DisplayFor(modelItem => comment.comment)
+
+                                                                                                                </div>
+                                                                                                                <!-- /.comment-text -->
+                                                                                                            </div>
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                    <div class="card-footer bg-white ">
+
+                                                                                                        @using (Html.BeginForm("Create", "Post", null, FormMethod.Post))
+                                                                                                        {
+                                                                                                            @Html.AntiForgeryToken()
+
+                                                                                                            <div class="form-group">
+                                                                                                                <div class="row">
+                                                                                                                    <img class="img-fluid img-circle img-sm" src="~/images/@Html.DisplayFor(model => model.Mainuser.images)" alt="Alt Text">
+                                                                                                                    <div class="col-7">
+                                                                                                                        <input type="text" class="form-control form-control-sm" placeholder="Press enter to post comment" id="comment" name="comment">
+                                                                                                                    </div>
+                                                                                                                    <input type="hidden" id="user_id" name="user_id" value="@Model.Mainuser.id" />
+                                                                                                                    <input type="hidden" id="post_id" name="post_id" value="@Model.post.id" />
+                                                                                                                    <div class="col-4 form-group">
+                                                                                                                        <div class="col-md-offset-2 col-md-10">
+                                                                                                                            <input type="submit" value="Post" class="btn btn-success" />
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+
+
+                                                                                                            </div>
+                                                                                                        }
+
+                                                                                                    </div>
+                                                                                                </div>
+                                                    <!-- /.card -->
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            <div class="col-md-4 hidden-xs hidden-sm">
+                                <ul class="profile-info-list">
+                                    <li class="title">PERSONAL INFORMATION</li>
+                                    <li>
+                                        <div class="field">Name:</div>
+                                        <div class="value">@Html.DisplayFor(model => Model.Mainuser.fname) @Html.DisplayFor(model => Model.Mainuser.lname)</div>
+                                    </li>
+                                    <li>
+                                        <div class="field">Email:</div>
+                                        <div class="value">@Html.DisplayFor(model => Model.Mainuser.email)</div>
+                                    </li>
+                                    <li>
+                                        <div class="field">Address:</div>
+                                        <div class="value">
+                                            <address class="m-b-0">
+                                                Twitter, Inc.<br />
+                                                1355 Market Street, Suite 900<br />
+                                                San Francisco, CA 94103
+                                            </address>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="field">Phone No.:</div>
+                                        <div class="value">
+                                            @Html.DisplayFor(model => Model.Mainuser.phone)
+                                        </div>
+                                    </li>
+
+                                </ul>
+                            </div>
+                    </div>
+ </div>
+
+
+<style type="text/css">
+    body {
+        background: #eaeaea;
+        margin-top: 20px;
+    }
+
+    .profile-info-list {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+    }
+
+    .friend-list,
+    .img-grid-list {
+        margin: -1px;
+        list-style-type: none;
+    }
+
+    .profile-info-list > li.title {
+        font-size: 0.625rem;
+        font-weight: 700;
+        color: #8a8a8f;
+        padding: 0 0 0.3125rem;
+    }
+
+    .profile-info-list > li + li.title {
+        padding-top: 1.5625rem;
+    }
+
+    .profile-info-list > li {
+        padding: 0.625rem 0;
+    }
+
+        .profile-info-list > li .field {
+            font-weight: 700;
+        }
+
+        .profile-info-list > li .value {
+            color: #666;
+        }
+
+        .profile-info-list > li.img-list a {
+            display: inline-block;
+        }
+
+            .profile-info-list > li.img-list a img {
+                max-width: 2.25rem;
+                -webkit-border-radius: 2.5rem;
+                -moz-border-radius: 2.5rem;
+                border-radius: 2.5rem;
+            }
+
+    .coming-soon-cover img,
+    .email-detail-attachment .email-attachment .document-file img,
+    .email-sender-img img,
+    .friend-list .friend-img img,
+    .profile-header-img img {
+        max-width: 100%;
+    }
+
+    .table.table-profile th {
+        border: none;
+        color: #000;
+        padding-bottom: 0.3125rem;
+        padding-top: 0;
+    }
+
+    .table.table-profile td {
+        border-color: #c8c7cc;
+    }
+
+    .table.table-profile tbody + thead > tr > th {
+        padding-top: 1.5625rem;
+    }
+
+    .table.table-profile .field {
+        color: #666;
+        font-weight: 600;
+        width: 25%;
+        text-align: right;
+    }
+
+    .table.table-profile .value {
+        font-weight: 500;
+    }
+
+    .profile-header {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .profile-header .profile-header-cover {
+            background: url(https://bootdey.com/img/Content/bg1.jpg) center no-repeat;
+            background-size: 100% auto;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+            .profile-header .profile-header-cover:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 0, rgba(0, 0, 0, 0.85) 100%);
+            }
+
+        .profile-header .profile-header-content,
+        .profile-header .profile-header-tab,
+        .profile-header-img,
+        body .fc-icon {
+            position: relative;
+        }
+
+        .profile-header .profile-header-tab {
+            background: #fff;
+            list-style-type: none;
+            margin: -1.25rem 0 0;
+            padding: 0 0 0 8.75rem;
+            border-bottom: 1px solid #c8c7cc;
+            white-space: nowrap;
+        }
+
+            .profile-header .profile-header-tab > li {
+                display: inline-block;
+                margin: 0;
+            }
+
+                .profile-header .profile-header-tab > li > a {
+                    display: block;
+                    color: #000;
+                    line-height: 1.25rem;
+                    padding: 0.625rem 1.25rem;
+                    text-decoration: none;
+                    font-weight: 700;
+                    font-size: 0.75rem;
+                    border: none;
+                }
+
+                    .profile-header .profile-header-tab > li.active > a,
+                    .profile-header .profile-header-tab > li > a.active {
+                        color: #007aff;
+                    }
+
+        .profile-header .profile-header-content:after,
+        .profile-header .profile-header-content:before {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        .profile-header .profile-header-content {
+            color: #fff;
+            padding: 1.25rem;
+        }
+
+    body .fc th a,
+    body .fc-ltr .fc-basic-view .fc-day-top .fc-day-number,
+    body .fc-widget-header a {
+        color: #000;
+    }
+
+    .profile-header-img {
+        float: left;
+        width: 7.5rem;
+        height: 7.5rem;
+        overflow: hidden;
+        z-index: 10;
+        margin: 0 1.25rem -1.25rem 0;
+        padding: 0.1875rem;
+        -webkit-border-radius: 0.25rem;
+        -moz-border-radius: 0.25rem;
+        border-radius: 0.25rem;
+        background: #fff;
+    }
+
+    .profile-header-info h4 {
+        font-weight: 500;
+        margin-bottom: 0.3125rem;
+    }
+
+    .profile-container {
+        padding: 1.5625rem;
+    }
+
+    .profile-info-list {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+    }
+
+    .friend-list,
+    .img-grid-list {
+        margin: -1px;
+        list-style-type: none;
+    }
+
+    .profile-info-list > li.title {
+        font-size: 0.625rem;
+        font-weight: 700;
+        color: #8a8a8f;
+        padding: 0 0 0.3125rem;
+    }
+
+    .profile-info-list > li + li.title {
+        padding-top: 1.5625rem;
+    }
+
+    .profile-info-list > li {
+        padding: 0.625rem 0;
+    }
+
+        .profile-info-list > li .field {
+            font-weight: 700;
+        }
+
+        .profile-info-list > li .value {
+            color: #666;
+        }
+
+        .profile-info-list > li.img-list a {
+            display: inline-block;
+        }
+
+            .profile-info-list > li.img-list a img {
+                max-width: 2.25rem;
+                -webkit-border-radius: 2.5rem;
+                -moz-border-radius: 2.5rem;
+                border-radius: 2.5rem;
+            }
+
+    .coming-soon-cover img,
+    .email-detail-attachment .email-attachment .document-file img,
+    .email-sender-img img,
+    .friend-list .friend-img img,
+    .profile-header-img img {
+        max-width: 100%;
+    }
+
+    .table.table-profile th {
+        border: none;
+        color: #000;
+        padding-bottom: 0.3125rem;
+        padding-top: 0;
+    }
+
+    .table.table-profile td {
+        border-color: #c8c7cc;
+    }
+
+    .table.table-profile tbody + thead > tr > th {
+        padding-top: 1.5625rem;
+    }
+
+    .table.table-profile .field {
+        color: #666;
+        font-weight: 600;
+        width: 25%;
+        text-align: right;
+    }
+
+    .table.table-profile .value {
+        font-weight: 500;
+    }
+
+    .friend-list {
+        padding: 0;
+    }
+
+        .friend-list > li {
+            float: left;
+            width: 50%;
+        }
+
+            .friend-list > li > a {
+                display: block;
+                text-decoration: none;
+                color: #000;
+                padding: 0.625rem;
+                margin: 1px;
+                background: #fff;
+            }
+
+                .friend-list > li > a:after,
+                .friend-list > li > a:before {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+
+        .friend-list .friend-img {
+            float: left;
+            width: 3rem;
+            height: 3rem;
+            overflow: hidden;
+            background: #efeff4;
+        }
+
+        .friend-list .friend-info {
+            margin-left: 3.625rem;
+        }
+
+            .friend-list .friend-info h4 {
+                margin: 0.3125rem 0;
+                font-size: 0.875rem;
+                font-weight: 600;
+            }
+
+            .friend-list .friend-info p {
+                color: #666;
+                margin: 0;
+            }
+</style>
